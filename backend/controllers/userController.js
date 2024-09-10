@@ -26,7 +26,12 @@ export const userLogin = async (req, res) => {
   const token = jwt.sign({ email }, process.env.JWT_USER_SECRET, {
     expiresIn: "1d",
   });
-  res.cookie("jwt", token, { httpOnly: true, maxAge: 1000 * 60 * 60 * 24 });
+  res.cookie("jwt", token, {
+    httpOnly: true,
+    secure: true,
+    sameSite: "strict",
+    maxAge: 1000 * 60 * 60 * 24,
+  });
   // console.log("Token is given");
 
   const existingUsers = await User.findOne({ quizId });
