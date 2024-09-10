@@ -5,6 +5,7 @@ import AdminRoutes from "./admin/AdminRoutes";
 import UserRoutes from "./user/UserRoutes";
 
 function App() {
+  axios.defaults.withCredentials = true;
   return (
     <>
       <Routes>
