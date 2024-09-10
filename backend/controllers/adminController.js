@@ -39,7 +39,7 @@ export const signup = async (req, res) => {
   }
 };
 export const login = async (req, res) => {
-  console.log("I'm hereeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee");
+  return res.json({ message: "I'm hereeeeeeeeeeeeeeeeeeeeeeeeeeeeeee" });
 
   const { email, password } = req.body;
   if (!email || !password)

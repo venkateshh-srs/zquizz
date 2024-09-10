@@ -15,6 +15,7 @@ mongoose.connection.on("connected", () => {
 const app = express();
 const port = 3000;
 app.use(cookieParser());
+
 app.use(
   cors({
     origin: process.env.FRONTEND_URL,
