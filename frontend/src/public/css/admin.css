@@ -1,0 +1,8 @@
+.signup-container {
+  display: flex;
+  height: 100vh;
+  flex-direction: column;
+  align-items: center;
+  gap: 9px;
+  justify-content: center;
+}
