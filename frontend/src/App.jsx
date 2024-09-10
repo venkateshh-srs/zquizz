@@ -3,6 +3,7 @@ import UserRoutes from "./user/UserRoutes";
 import Home from "./common/Home";
 import AdminRoutes from "./admin/AdminRoutes";
 import UserRoutes from "./user/UserRoutes";
+import axios from "axios";
 
 function App() {
   axios.defaults.withCredentials = true;
