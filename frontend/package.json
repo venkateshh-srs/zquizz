@@ -1,7 +1,6 @@
 {
   "name": "frontend",
   "version": "1.0.0",
-  "main": "src/index.html",
   "scripts": {
     "build": "parcel build src/index.html",
     "start": "parcel src/index.html",
