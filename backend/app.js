@@ -22,10 +22,13 @@ app.use(
     credentials: true,
   })
 );
-// app.use(express.urlencoded({ extended: true }));
+app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use("/admin", adminRoutes);
 app.use("/user", userRoutes);
+app.get("/", (req, res) => {
+  res.send("hello");
+});
 // app.get("/quiz/:id", async (req, res) => {
 //   //if admin show preview
 //   const quizId = req.params.id;
