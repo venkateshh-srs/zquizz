@@ -1,7 +1,7 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import Admin from "../models/Admin.js";
-import QuizAutosave from "../models/QuizAutoSave.js";
+import QuizAutosave from "../models/QuizAutosave.js";
 import Quizes from "../models/Quizes.js";
 import User from "../models/User.js";
 import { v4 as uuidv4 } from "uuid";
@@ -40,8 +40,6 @@ export const signup = async (req, res) => {
   }
 };
 export const login = async (req, res) => {
-  // return res.json({ message: "I'm hereeeeeeeeeeeeeeeeeeeeeeeeeeeeeee" });
-
   const { email, password } = req.body;
   if (!email || !password)
     return res.status(400).json({ message: "All fields are required" });

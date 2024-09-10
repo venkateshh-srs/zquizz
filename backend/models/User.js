@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { questionSchema } from "./QuizAutoSave.js";
+import { questionSchema } from "./QuizAutosave.js";
 
 const userSchema = new mongoose.Schema({
   userName: { type: String, required: true },
