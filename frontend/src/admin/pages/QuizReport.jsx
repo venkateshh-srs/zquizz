@@ -68,11 +68,12 @@ export default function QuizReport() {
                 <TableContainer>
                   <Typography>
                     <a
-                      href={`http://localhost:1234/user/quiz/${report.quizData.quizId}`}
+                      href={`${process.env.FRONTEND_URL}/user/quiz/${report.quizData.quizId}`}
                       target="_blank"
                       rel="noopener noreferrer"
                     >
-                      http://localhost:1234/user/quiz/{report.quizData.quizId}
+                      {process.env.FRONTEND_URL}/user/quiz/
+                      {report.quizData.quizId}
                     </a>
                   </Typography>
                   <Table sx={{ minWidth: 200 }}>

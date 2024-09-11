@@ -29,7 +29,7 @@ export default function CustomizedDialogs({
   const [snackbarOpen, setSnackbarOpen] = useState(false);
 
   const handleCopy = () => {
-    const textToCopy = `http://localhost:1234/user/quiz/${quizLink}`;
+    const textToCopy = `${process.env.FRONTEND_URL}/${quizLink}`;
     navigator.clipboard
       .writeText(textToCopy)
       .then(() => {
@@ -64,7 +64,9 @@ export default function CustomizedDialogs({
             <CloseIcon />
           </IconButton>
           <DialogContent dividers>
-            <Typography gutterBottom>{`${url}/quiz/${quizLink}`}</Typography>
+            <Typography
+              gutterBottom
+            >{`${process.env.FRONTEND_URL}/quiz/${quizLink}`}</Typography>
           </DialogContent>
           <DialogActions>
             <Button autoFocus onClick={handleCopy}>
