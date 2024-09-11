@@ -28,9 +28,9 @@ export const userLogin = async (req, res) => {
   });
   res.cookie("jwt", token, {
     httpOnly: true,
-    secure: true,
-    sameSite: "strict",
     maxAge: 1000 * 60 * 60 * 24,
+    secure: true,
+    sameSite: "None",
   });
   // console.log("Token is given");
 
