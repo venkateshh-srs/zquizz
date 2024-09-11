@@ -4,7 +4,9 @@ axios.defaults.withCredentials = true;
 export async function isAuthenticated() {
   try {
     //if authenticated ,give saved data in db
-    const response = await axios.get(url + "/admin/auto-save");
+    const response = await axios.get(url + "/admin/auto-save", {
+      withCredentials: true,
+    });
     // console.log(response);
     return response.data.message;
   } catch (error) {
