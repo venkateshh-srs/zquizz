@@ -144,6 +144,7 @@ function QuestionTemplate({ questions, setQuestions, title, setTitle }) {
   async function handleGenerateQuiz(topicName, n) {
     setLoader(true);
     const trimmedTopicName = topicName.trim();
+
     if (trimmedTopicName.length < 3) {
       setLoader(() => false);
       setOpenError(true);
@@ -167,6 +168,12 @@ function QuestionTemplate({ questions, setQuestions, title, setTitle }) {
     // console.log(typeof n);
 
     const data = await generateQuiz(topicName, n);
+    if (data.error) {
+      setLoader(() => false);
+      setOpenError(true);
+      setErrorMessage("Can't generate quiz, please try again");
+      return;
+    }
     const parsedData = JSON.parse(data);
     if (!parsedData.sanitized) {
       const questions = parsedData.questions;

@@ -61,7 +61,7 @@ export default async function generateQuiz(topicName, numQuestions) {
     const quiz_response = response.choices[0].message.content;
     return quiz_response;
   } catch (e) {
-    console.error("Error: ", e.message);
-    return e.message;
+    // console.error("Error: ", e.message);
+    return { error: e.message };
   }
 }
