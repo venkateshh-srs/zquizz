@@ -79,7 +79,7 @@ function Navbar(props) {
   }
   async function handleConfirmPublish() {
     setOpen(false);
-    setLoader(true);
+    setLoader(true);    
     try {
       const data = { questions: props.questions, title: props.title };
       const response = await axios.post(url + "/admin/publish", data);

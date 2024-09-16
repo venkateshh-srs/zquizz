@@ -66,6 +66,8 @@ export default function QuizReport() {
               </AccordionSummary>
               <AccordionDetails>
                 <TableContainer>
+                  {console.log(process.env.FRONTEND_URL)}
+
                   <Typography>
                     <a
                       href={`${process.env.FRONTEND_URL}/user/quiz/${report.quizData.quizId}`}

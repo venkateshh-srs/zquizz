@@ -1,6 +1,10 @@
 import { useState, useRef } from "react";
-import Snackbar from "@mui/material/Snackbar";
+import { Snackbar, Alert } from "@mui/material";
+import { z } from "zod";
 import { betterFunction } from "../constants";
+import generateQuiz from "../generateQuiz.js";
+import Backdrop from "@mui/material/Backdrop";
+import CircularProgress from "@mui/material/CircularProgress";
 import {
   Box,
   Button,
@@ -17,11 +21,18 @@ import DeleteIcon from "@mui/icons-material/Delete";
 function QuestionTemplate({ questions, setQuestions, title, setTitle }) {
   const [open, setOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [topic, setTopic] = useState("");
+  const [number, setNumber] = useState(4);
+  const [openError, setOpenError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+  const [loader, setLoader] = useState(false);
+
   const handleClose = (event, reason) => {
     if (reason === "clickaway") {
       return;
     }
     setOpen(false);
+    setOpenError(false);
   };
 
   function handleTitleChange(e) {
@@ -124,21 +135,92 @@ function QuestionTemplate({ questions, setQuestions, title, setTitle }) {
       return updatedQuestions;
     });
   }
+  function handleTopicChange(e) {
+    setTopic(() => e.target.value);
+  }
+  function handleNumberChange(e) {
+    setNumber(() => e.target.value);
+  }
+  async function handleGenerateQuiz(topicName, n) {
+    setLoader(true);
+    const trimmedTopicName = topicName.trim();
+    if (trimmedTopicName.length < 3) {
+      setLoader(() => false);
+      setOpenError(true);
+      setErrorMessage("Topic length must be at least 3 chars");
+      return;
+    }
+    if (trimmedTopicName.length > 50) {
+      setLoader(() => false);
+      setOpenError(true);
+      setErrorMessage("Topic length cannot exceed 50 chars");
+
+      return;
+    }
+    if (n > 10) {
+      setLoader(() => false);
+      setOpenError(true);
+      setErrorMessage("Maximum 10 questions can be generated");
+
+      return;
+    }
+    // console.log(typeof n);
+
+    const data = await generateQuiz(topicName, n);
+    const parsedData = JSON.parse(data);
+    if (!parsedData.sanitized) {
+      const questions = parsedData.questions;
+      setQuestions(() => {
+        betterFunction(questions, title);
+        return questions;
+      });
+    } else {
+      setOpenError(true);
+      setErrorMessage("Cannot generate questions for this topic");
+    }
+    setLoader(() => false);
+  }
   return (
     <>
       <Box
         sx={{
-          display: "flex",
           width: "100%",
+          display: "flex",
           justifyContent: "center",
-          border: "1px solid GREY",
-
+          gap: "1rem",
           mt: "6rem",
-          // position: "fixed",
-          // zIndex: 1,
+          right: "200rem",
         }}
       >
-        <h1>Create Quiz</h1>
+        <TextField
+          sx={{ width: "10rem" }}
+          id="standard-basic"
+          label="Topic"
+          variant="outlined"
+          placeholder="Topic name"
+          value={topic}
+          onChange={handleTopicChange}
+        />
+        <TextField
+          sx={{ width: "10rem" }}
+          id="standard-basic"
+          label="Number"
+          type="number"
+          variant="outlined"
+          placeholder="No.of questions"
+          inputProps={{
+            min: 1,
+            step: 1,
+          }}
+          value={number}
+          onChange={handleNumberChange}
+        />
+        <Button
+          onClick={() => handleGenerateQuiz(topic, number)}
+          variant="contained"
+        >
+          Generate with AI
+        </Button>
       </Box>
 
       <Box
@@ -283,6 +365,14 @@ function QuestionTemplate({ questions, setQuestions, title, setTitle }) {
           </Button>
         </div>
       </Box>
+      {loader && (
+        <Backdrop
+          sx={(theme) => ({ color: "#fff", zIndex: theme.zIndex.drawer + 1 })}
+          open={loader}
+        >
+          <CircularProgress />
+        </Backdrop>
+      )}
       {/* why not rendering every time */}
       <Snackbar
         open={open}
@@ -291,6 +381,16 @@ function QuestionTemplate({ questions, setQuestions, title, setTitle }) {
         message={snackbarMessage}
         severity="success"
       />
+      <Snackbar
+        open={openError}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+        autoHideDuration={2500}
+        onClose={handleClose}
+      >
+        <Alert onClose={handleClose} severity="error" sx={{ width: "100%" }}>
+          {errorMessage}
+        </Alert>
+      </Snackbar>
     </>
   );
 }

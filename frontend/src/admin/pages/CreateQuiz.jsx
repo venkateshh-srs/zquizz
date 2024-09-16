@@ -5,6 +5,7 @@ import Navbar from "../components/Navbar";
 import Box from "@mui/material/Box";
 import Container from "@mui/material/Container";
 import QuestionTemplate from "../components/QuestionTemplate.jsx";
+import { Mms } from "@mui/icons-material";
 
 function CreateQuiz() {
   const [loading, setLoading] = useState(true);
@@ -12,6 +13,7 @@ function CreateQuiz() {
   const [title, setTitle] = useState("");
   const navigate = useNavigate();
   useEffect(() => {
+    //
     const isUserAuthenticated = async () => {
       const res = await isAuthenticated();
       if (res) {
