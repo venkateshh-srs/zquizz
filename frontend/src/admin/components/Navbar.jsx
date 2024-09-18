@@ -30,7 +30,7 @@ import Typography from "@mui/material/Typography";
 import CopyLinkDialog from "./CopyLinkDialog";
 import { useNavigate } from "react-router-dom";
 const drawerWidth = 240;
-const navItems = ["Home", "Quizes", "Publish"];
+const navItems = ["Home", "Publish"];
 const url = process.env.BACKEND_URL;
 function Navbar(props) {
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -79,7 +79,7 @@ function Navbar(props) {
   }
   async function handleConfirmPublish() {
     setOpen(false);
-    setLoader(true);    
+    setLoader(true);
     try {
       const data = { questions: props.questions, title: props.title };
       const response = await axios.post(url + "/admin/publish", data);

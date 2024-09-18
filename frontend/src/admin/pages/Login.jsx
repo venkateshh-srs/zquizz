@@ -28,12 +28,12 @@ function Login() {
   const navigate = useNavigate();
   const location = useLocation();
   // console.log(location);
-  useEffect(() => {
-    setTimeout(() => {
-      //wont reload, just renders(SPA) and thr eplace options clears the login page in navigation history so that user cant navigate back to login page after login
-      navigate("/admin/login", { replace: true });
-    }, 2000);
-  }, []);
+  // useEffect(() => {
+  //   setTimeout(() => {
+  //     //wont reload, just renders(SPA) and thr eplace options clears the login page in navigation history so that user cant navigate back to login page after login
+  //     navigate("/admin/login", { replace: true });
+  //   }, 2000);
+  // }, []);
   const handleEmailChange = (e) => {
     setEmail(() => e.target.value);
   };

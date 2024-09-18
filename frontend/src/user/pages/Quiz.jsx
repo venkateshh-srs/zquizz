@@ -13,7 +13,6 @@ import {
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
-import { autoSaveQuiz } from "../../admin/constants";
 
 const url = process.env.BACKEND_URL;
 
@@ -27,28 +26,37 @@ function Quiz() {
   const navigate = useNavigate();
 
   const handleAnswerChange = (questionIndex, answerIndex) => {
-    autoSaveQuiz(selectedAnswers);
     setSelectedAnswers((prev) => {
       const newAnswers = [...prev];
       newAnswers[questionIndex] =
         newAnswers[questionIndex] === answerIndex ? null : answerIndex;
-      autoSaveQuiz(newAnswers, quizId);
       return newAnswers;
     });
   };
 
   const handleSubmit = async () => {
+    console.log("submitting");
+
     try {
       const res = await axios.post(
         url + "/user/submit/" + quizId,
         selectedAnswers
       );
+      // console.log(res);
+      console.log(res.data.selectedOptions);
+      console.log(res.data.correctOptions);
+
       navigate("/user/result/" + quizId, {
-        state: { score: res.data.message },
+        state: {
+          score: res.data.score,
+          questions,
+          selectedOptions: res.data.selectedOptions,
+          correctOptions: res.data.correctOptions,
+        },
         replace: true,
       });
     } catch (error) {
-      navigate("/user/login/" + quizId, { replace: true });
+      // navigate("/user/login/" + quizId, { replace: true });
     }
   };
 
@@ -56,30 +64,16 @@ function Quiz() {
     async function getData() {
       try {
         const response = await axios.get(url + "/user/quiz/" + quizId);
-
-        if (response.data.completed) {
-          navigate("/user/result/" + quizId, {
-            state: { score: response.data.score },
-            replace: true,
-          });
-        }
+        console.log(response);
 
         const questions = response.data.message;
         const title = response.data.title;
+        setSelectedAnswers(Array(questions.length).fill(null));
         setLoading(false);
         setQuestions(questions);
         setTitle(title);
-        setUserDetails({
-          userName: response.data.userName,
-          email: response.data.email,
-        });
-        const selectedOptions = [];
-        questions.forEach((q) => {
-          selectedOptions.push(q.selectedOption);
-        });
-        setSelectedAnswers(selectedOptions);
       } catch (error) {
-        navigate("/user/login/" + quizId);
+        // navigate("/user/login/" + quizId);
       }
     }
     getData();
@@ -95,9 +89,7 @@ function Quiz() {
       <Typography variant="h4" align="center" gutterBottom>
         {title}
       </Typography>
-      <Typography variant="subtitle1" align="center" gutterBottom>
-        username: {userDetails.userName} , email: {userDetails.email}
-      </Typography>
+
       <Divider sx={{ marginBottom: "2rem" }} />
       <FormControl component="fieldset">
         {questions.map((q, qInd) => (
