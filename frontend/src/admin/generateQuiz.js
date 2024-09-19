@@ -39,13 +39,15 @@ export default async function generateQuiz(topicName, numQuestions) {
         {
           role: "user",
           content: `Please analyze the following topic name: "${topicName}".
-    First, check if the topic is nonsensical, contains sexual content, violence, or self-harm. 
-    If any of these issues are present, return a JSON object like this:
-    { "sanitized": true, "questions": [] }.If the topic is appropriate, generate ${Math.min(
-      numQuestions,
-      10
-    )} multiple-choice quiz questions. 
-    Each question should have a "question", 4 "options", and one "correctOption" which is index of the option.`,
+        First, check if the topic is nonsensical, contains sexual content, violence, or self-harm. 
+        If any of these issues are present, return a JSON object like this:
+        { "sanitized": true, "questions": [] }.
+        If the topic is appropriate, generate ${Math.min(
+          numQuestions,
+          10
+        )} multiple-choice quiz questions. 
+        If there are any mathematical formulas in the question or options give them in latex format.
+        Each question should have a "question", 4 "options", and one "correctOption" which is the index of the option.`,
         },
       ],
       response_format: {

@@ -13,6 +13,7 @@ import {
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
+import { MathJax, MathJaxContext } from "better-react-mathjax";
 
 const url = process.env.BACKEND_URL;
 
@@ -42,7 +43,6 @@ function Quiz() {
         url + "/user/submit/" + quizId,
         selectedAnswers
       );
-      // console.log(res);
       console.log(res.data.selectedOptions);
       console.log(res.data.correctOptions);
 
@@ -56,7 +56,7 @@ function Quiz() {
         replace: true,
       });
     } catch (error) {
-      // navigate("/user/login/" + quizId, { replace: true });
+      // Handle submission error, e.g., navigate to login page
     }
   };
 
@@ -64,8 +64,6 @@ function Quiz() {
     async function getData() {
       try {
         const response = await axios.get(url + "/user/quiz/" + quizId);
-        console.log(response);
-
         const questions = response.data.message;
         const title = response.data.title;
         setSelectedAnswers(Array(questions.length).fill(null));
@@ -73,7 +71,7 @@ function Quiz() {
         setQuestions(questions);
         setTitle(title);
       } catch (error) {
-        // navigate("/user/login/" + quizId);
+        // Handle error, e.g., navigate to login page
       }
     }
     getData();
@@ -91,40 +89,67 @@ function Quiz() {
       </Typography>
 
       <Divider sx={{ marginBottom: "2rem" }} />
-      <FormControl component="fieldset">
-        {questions.map((q, qInd) => (
-          <Box key={qInd} mb={4}>
-            <FormLabel
-              sx={{
-                marginBottom: "1rem",
-                fontWeight: "bold",
-                wordBreak: "break-word",
-              }}
-            >
-              {qInd + 1}. {q.question}
-            </FormLabel>
-            <RadioGroup
-              value={selectedAnswers[qInd]}
-              onChange={(event) =>
-                handleAnswerChange(qInd, parseInt(event.target.value))
-              }
-            >
-              {q.options.map((o, oInd) => (
-                <FormControlLabel
-                  sx={{
-                    wordBreak: "break-word",
-                  }}
-                  key={oInd}
-                  value={oInd}
-                  control={<Radio />}
-                  label={o}
-                />
-              ))}
-            </RadioGroup>
-          </Box>
-        ))}
-        <Divider sx={{ margin: "2rem 0" }} />
-      </FormControl>
+
+      <MathJaxContext
+        config={{
+          loader: { load: ["input/tex", "input/mml", "output/chtml"] }, // Load both LaTeX and MathML
+          tex: {
+            inlineMath: [
+              ["$", "$"],
+              ["\\(", "\\)"],
+            ],
+            displayMath: [
+              ["$$", "$$"],
+              ["\\[", "\\]"],
+            ],
+          },
+        }}
+      >
+        <FormControl component="fieldset">
+          {questions.map((q, qInd) => (
+            <Box key={qInd} mb={4}>
+              <FormLabel
+                sx={{
+                  marginBottom: "1rem",
+                  fontWeight: "bold",
+                  wordBreak: "break-word",
+                }}
+              >
+                {qInd + 1}.{"  "}
+                <MathJax inline dynamic>
+                  <div
+                    style={{ display: "inline" }}
+                    dangerouslySetInnerHTML={{ __html: q.question }}
+                  />
+                </MathJax>
+              </FormLabel>
+              <RadioGroup
+                value={selectedAnswers[qInd]}
+                onChange={(event) =>
+                  handleAnswerChange(qInd, parseInt(event.target.value))
+                }
+              >
+                {q.options.map((o, oInd) => (
+                  <FormControlLabel
+                    sx={{
+                      wordBreak: "break-word",
+                    }}
+                    key={oInd}
+                    value={oInd}
+                    control={<Radio />}
+                    label={
+                      <MathJax inline dynamic>
+                        <div dangerouslySetInnerHTML={{ __html: o }} />
+                      </MathJax>
+                    }
+                  />
+                ))}
+              </RadioGroup>
+            </Box>
+          ))}
+          <Divider sx={{ margin: "2rem 0" }} />
+        </FormControl>
+      </MathJaxContext>
       <div style={{ textAlign: "center" }}>
         <Button variant="contained" color="primary" onClick={handleSubmit}>
           Submit Quiz

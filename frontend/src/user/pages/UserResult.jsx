@@ -12,6 +12,7 @@ import {
   FormControl,
   FormLabel,
 } from "@mui/material";
+import { MathJax, MathJaxContext } from "better-react-mathjax";
 
 function UserResult() {
   const location = useLocation();
@@ -25,8 +26,6 @@ function UserResult() {
 
     return (
       <>
-        {console.log(selectedOptions)}
-        {console.log(correctOptions)}
         <Paper
           sx={{
             padding: "2rem",
@@ -52,59 +51,79 @@ function UserResult() {
             </Typography>
           </Box>
         </Paper>
-        <Paper
-          elevation={3}
-          sx={{ padding: "2rem", maxWidth: "800px", margin: "2rem auto" }}
+        <MathJaxContext
+          config={{
+            loader: { load: ["input/tex", "input/mml", "output/chtml"] }, // Load both LaTeX and MathML
+            tex: {
+              inlineMath: [
+                ["$", "$"],
+                ["\\(", "\\)"],
+              ],
+              displayMath: [
+                ["$$", "$$"],
+                ["\\[", "\\]"],
+              ],
+            },
+          }}
         >
-          <Divider sx={{ marginBottom: "2rem" }} />
-          <FormControl component="fieldset">
-            {questions.map((q, qInd) => (
-              <Box key={qInd} mb={4}>
-                <FormLabel
-                  sx={{
-                    marginBottom: "1rem",
-                    fontWeight: "bold",
-                    wordBreak: "break-word",
-                  }}
-                >
-                  {qInd + 1}. {q.question}
-                </FormLabel>
-                <RadioGroup value={selectedOptions[qInd]}>
-                  {q.options.map((o, oInd) => {
-                    const isCorrect = oInd === correctOptions[qInd];
-                    const isSelected = oInd === selectedOptions[qInd];
+          <Paper
+            elevation={3}
+            sx={{ padding: "2rem", maxWidth: "800px", margin: "2rem auto" }}
+          >
+            <Divider sx={{ marginBottom: "2rem" }} />
 
-                    let textColor = "initial";
+            <FormControl component="fieldset">
+              {questions.map((q, qInd) => (
+                <Box key={qInd} mb={4}>
+                  <FormLabel
+                    sx={{
+                      marginBottom: "1rem",
+                      fontWeight: "bold",
+                      wordBreak: "break-word",
+                    }}
+                  >
+                    {qInd + 1}. {q.question}
+                  </FormLabel>
+                  <RadioGroup value={selectedOptions[qInd]}>
+                    {q.options.map((o, oInd) => {
+                      const isCorrect = oInd === correctOptions[qInd];
+                      const isSelected = oInd === selectedOptions[qInd];
 
-                    if (isSelected && isCorrect) {
-                      textColor = "rgb(31, 173, 255)"; // selected&incorrect
-                    } else if (isSelected && !isCorrect) {
-                      textColor = "rgb(255, 51, 51)"; // selected&incorrect
-                    } else if (!isSelected && isCorrect) {
-                      textColor = "rgb(2, 181, 50)"; // correct option,but not selected by user
-                    }
+                      let textColor = "initial";
 
-                    return (
-                      <FormControlLabel
-                        key={oInd}
-                        value={oInd}
-                        control={<Radio disabled />}
-                        label={
-                          <Typography sx={{ color: textColor }}>{o}</Typography>
-                        }
-                        sx={{
-                          wordBreak: "break-word",
-                          padding: "0.5rem",
-                        }}
-                      />
-                    );
-                  })}
-                </RadioGroup>
-              </Box>
-            ))}
-            <Divider sx={{ margin: "2rem 0" }} />
-          </FormControl>
-        </Paper>
+                      if (isSelected && isCorrect) {
+                        textColor = "rgb(31, 173, 255)"; // selected&incorrect
+                      } else if (isSelected && !isCorrect) {
+                        textColor = "rgb(255, 51, 51)"; // selected&incorrect
+                      } else if (!isSelected && isCorrect) {
+                        textColor = "rgb(2, 181, 50)"; // correct option,but not selected by user
+                      }
+
+                      return (
+                        <FormControlLabel
+                          key={oInd}
+                          value={oInd}
+                          control={<Radio disabled />}
+                          label={
+                            <Typography sx={{ color: textColor }}>
+                              {o}
+                            </Typography>
+                          }
+                          sx={{
+                            wordBreak: "break-word",
+                            padding: "0.5rem",
+                          }}
+                        />
+                      );
+                    })}
+                  </RadioGroup>
+                </Box>
+              ))}
+
+              <Divider sx={{ margin: "2rem 0" }} />
+            </FormControl>
+          </Paper>
+        </MathJaxContext>
       </>
     );
   }

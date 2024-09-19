@@ -25,6 +25,7 @@ function CreateQuiz() {
     isUserAuthenticated();
   }, []);
   if (loading) return <>Loading...</>;
+  
   return (
     <>
       <Box>

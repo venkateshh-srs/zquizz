@@ -5,18 +5,21 @@ import { betterFunction } from "../constants";
 import generateQuiz from "../generateQuiz.js";
 import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
+
 import {
   Box,
   Button,
   TextField,
   Typography,
   FormControl,
+  FormLabel,
   InputLabel,
   Select,
   MenuItem,
 } from "@mui/material";
 import { Box, TextField, IconButton } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
+import { MathJax, MathJaxContext } from "better-react-mathjax";
 
 function QuestionTemplate({ questions, setQuestions, title, setTitle }) {
   const [open, setOpen] = useState(false);
@@ -187,6 +190,7 @@ function QuestionTemplate({ questions, setQuestions, title, setTitle }) {
     }
     setLoader(() => false);
   }
+
   return (
     <>
       <Box
@@ -229,175 +233,203 @@ function QuestionTemplate({ questions, setQuestions, title, setTitle }) {
           Generate with AI
         </Button>
       </Box>
-
-      <Box
-        sx={{
-          position: "absolute",
-          mt: "11rem",
-          borderRadius: "8px",
+      <MathJaxContext
+        config={{
+          loader: { load: ["input/tex", "input/mml", "output/chtml"] }, // Load both LaTeX and MathML
+          tex: {
+            inlineMath: [
+              ["$", "$"],
+              ["\\(", "\\)"],
+            ],
+            displayMath: [
+              ["$$", "$$"],
+              ["\\[", "\\]"],
+            ],
+          },
         }}
       >
-        <Box sx={{ mb: 2 }}>
-          <TextField
-            sx={{ width: "21rem" }}
-            id="standard-basic"
-            label="Title"
-            variant="standard"
-            placeholder="Enter title of your quiz"
-            value={title}
-            onChange={handleTitleChange}
-          />
-        </Box>
-        {questions.map((q, qInd) => (
-          <>
-            <Box
-              key={qInd}
-              sx={{
-                border: "1px solid grey",
-                borderRadius: "8px",
-                // position: "absolute",
-                // top: "5rem",
-                display: "flex",
-                flexDirection: "column",
-                flexShrink: 1,
-                mb: 3,
-
-                padding: "3rem",
-                pb: 3,
-                "&:hover .delete-icon-question": { visibility: "visible" },
-                "@media (max-width: 550px)": {
-                  padding: "0rem",
-                  pb: "1rem",
-                },
-              }}
-            >
-              <TextField
-                label={`Question ${qInd + 1}`}
-                multiline
-                maxRows={5}
-                variant="standard"
-                sx={{ width: "400px", mb: 2 }}
-                onChange={() => handleQuestionChange(qInd, event)}
-                value={q.question}
-              />
-              {q.options.map((o, oInd) => (
-                <>
-                  <Box
-                    key={oInd}
-                    sx={{
-                      display: "flex",
-                      alignItems: "center",
-                      mb: 2,
-                      "&:hover .delete-icon-option": { visibility: "visible" },
-                    }}
-                  >
-                    <TextField
-                      label={`Option ${oInd + 1}`}
-                      variant="outlined"
-                      onChange={() => handleOptionChange(qInd, oInd, event)}
-                      value={q.options[oInd]}
-                    />
-                    <IconButton
-                      className="delete-icon delete-icon-option"
-                      onClick={() => handleDeleteOption(qInd, oInd)}
-                      sx={{ visibility: "hidden" }}
-                    >
-                      <DeleteIcon />
-                    </IconButton>
-                  </Box>
-                </>
-              ))}
-              <Box
-                sx={{
-                  // border: "1px solid green",
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                  mb: 1,
-                  "&:hover.delete-icon-question": { visibility: "visible" },
-                }}
-              >
-                <Button
-                  onClick={() => handleAddOption(qInd)}
-                  variant="outlined"
-                  sx={{ marginBottom: "40px" }}
-                >
-                  Add Option
-                </Button>
-              </Box>
-              <Box
-                sx={{
-                  // border: "1px solid green",
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                  mb: 1,
-                  "&:hover.delete-icon-question": { visibility: "visible" },
-                }}
-              >
-                <FormControl sx={{ width: "10rem" }}>
-                  <InputLabel>Correct option</InputLabel>
-                  <Select
-                    value={q.correctOption}
-                    onChange={(e) => handleCorrectOptionChange(qInd, e)}
-                  >
-                    {q.options.map((o, oInd) => {
-                      return (
-                        <MenuItem key={oInd} value={oInd}>
-                          {o || `Option ${oInd + 1}`}
-                        </MenuItem>
-                      );
-                    })}
-                  </Select>
-                </FormControl>
-                <IconButton
-                  className="delete-icon delete-icon-question"
-                  onClick={() => handleDeleteQuestion(qInd)}
-                  sx={{ visibility: "hidden", color: "red" }}
-                  // onClick={handleClick({ vertical: "bottom", horizontal: "left" })}
-                >
-                  <DeleteIcon />
-                </IconButton>
-              </Box>
-            </Box>
-          </>
-        ))}
-        <div style={{ textAlign: "center" }}>
-          <Button
-            sx={{ mb: 7 }}
-            onClick={handleAddQuestion}
-            variant="contained"
-          >
-            Add
-          </Button>
-        </div>
-      </Box>
-      {loader && (
-        <Backdrop
-          sx={(theme) => ({ color: "#fff", zIndex: theme.zIndex.drawer + 1 })}
-          open={loader}
+        <Box
+          sx={{
+            position: "absolute",
+            mt: "11rem",
+            borderRadius: "8px",
+          }}
         >
-          <CircularProgress />
-        </Backdrop>
-      )}
-      {/* why not rendering every time */}
-      <Snackbar
-        open={open}
-        autoHideDuration={2500}
-        onClose={handleClose}
-        message={snackbarMessage}
-        severity="success"
-      />
-      <Snackbar
-        open={openError}
-        anchorOrigin={{ vertical: "top", horizontal: "center" }}
-        autoHideDuration={2500}
-        onClose={handleClose}
-      >
-        <Alert onClose={handleClose} severity="error" sx={{ width: "100%" }}>
-          {errorMessage}
-        </Alert>
-      </Snackbar>
+          <Box sx={{ mb: 2 }}>
+            <TextField
+              sx={{ width: "21rem" }}
+              id="standard-basic"
+              label="Title"
+              variant="standard"
+              placeholder="Enter title of your quiz"
+              value={title}
+              onChange={handleTitleChange}
+            />
+          </Box>
+          {questions.map((q, qInd) => (
+            <>
+              <Box
+                key={qInd}
+                sx={{
+                  border: "1px solid grey",
+                  borderRadius: "8px",
+                  // position: "absolute",
+                  // top: "5rem",
+                  display: "flex",
+                  flexDirection: "column",
+                  flexShrink: 1,
+                  mb: 3,
+
+                  padding: "3rem",
+                  pb: 3,
+                  "&:hover .delete-icon-question": { visibility: "visible" },
+                  "@media (max-width: 550px)": {
+                    padding: "0rem",
+                    pb: "1rem",
+                  },
+                }}
+              >
+                <TextField
+                  label={`Question ${qInd + 1}`}
+                  multiline
+                  maxRows={5}
+                  variant="standard"
+                  sx={{ width: "400px", mb: 2 }}
+                  onChange={() => handleQuestionChange(qInd, event)}
+                  value={q.question}
+                />
+                {q.options.map((o, oInd) => (
+                  <>
+                    <Box
+                      key={oInd}
+                      sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        mb: 2,
+                        "&:hover .delete-icon-option": {
+                          visibility: "visible",
+                        },
+                      }}
+                    >
+                      <TextField
+                        label={`Option ${oInd + 1}`}
+                        variant="outlined"
+                        onChange={() => handleOptionChange(qInd, oInd, event)}
+                        value={o}
+                      />
+                      {/* <FormLabel>
+                        {" "}
+                        <MathJax inline dynamic>
+                          <div dangerouslySetInnerHTML={{ __html: o }} />
+                        </MathJax>
+                      </FormLabel> */}
+
+                      <IconButton
+                        className="delete-icon delete-icon-option"
+                        onClick={() => handleDeleteOption(qInd, oInd)}
+                        sx={{ visibility: "hidden" }}
+                      >
+                        <DeleteIcon />
+                      </IconButton>
+                    </Box>
+                  </>
+                ))}
+                <Box
+                  sx={{
+                    // border: "1px solid green",
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    mb: 1,
+                    "&:hover.delete-icon-question": { visibility: "visible" },
+                  }}
+                >
+                  <Button
+                    onClick={() => handleAddOption(qInd)}
+                    variant="outlined"
+                    sx={{ marginBottom: "40px" }}
+                  >
+                    Add Option
+                  </Button>
+                </Box>
+                <Box
+                  sx={{
+                    // border: "1px solid green",
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    mb: 1,
+                    "&:hover.delete-icon-question": { visibility: "visible" },
+                  }}
+                >
+                  <FormControl sx={{ width: "10rem" }}>
+                    <InputLabel>Correct option</InputLabel>
+                    <Select
+                      value={q.correctOption}
+                      onChange={(e) => handleCorrectOptionChange(qInd, e)}
+                    >
+                      {q.options.map((o, oInd) => {
+                        return (
+                          <MenuItem key={oInd} value={oInd}>
+                            {(
+                              <MathJax dynamic>
+                                <div dangerouslySetInnerHTML={{ __html: o }} />
+                              </MathJax>
+                            ) || `Option ${oInd + 1}`}
+                          </MenuItem>
+                        );
+                      })}
+                    </Select>
+                  </FormControl>
+                  <IconButton
+                    className="delete-icon delete-icon-question"
+                    onClick={() => handleDeleteQuestion(qInd)}
+                    sx={{ visibility: "hidden", color: "red" }}
+                    // onClick={handleClick({ vertical: "bottom", horizontal: "left" })}
+                  >
+                    <DeleteIcon />
+                  </IconButton>
+                </Box>
+              </Box>
+            </>
+          ))}
+          <div style={{ textAlign: "center" }}>
+            <Button
+              sx={{ mb: 7 }}
+              onClick={handleAddQuestion}
+              variant="contained"
+            >
+              Add
+            </Button>
+          </div>
+        </Box>
+        {loader && (
+          <Backdrop
+            sx={(theme) => ({ color: "#fff", zIndex: theme.zIndex.drawer + 1 })}
+            open={loader}
+          >
+            <CircularProgress />
+          </Backdrop>
+        )}
+        {/* why not rendering every time */}
+        <Snackbar
+          open={open}
+          autoHideDuration={2500}
+          onClose={handleClose}
+          message={snackbarMessage}
+          severity="success"
+        />
+        <Snackbar
+          open={openError}
+          anchorOrigin={{ vertical: "top", horizontal: "center" }}
+          autoHideDuration={2500}
+          onClose={handleClose}
+        >
+          <Alert onClose={handleClose} severity="error" sx={{ width: "100%" }}>
+            {errorMessage}
+          </Alert>
+        </Snackbar>
+      </MathJaxContext>
     </>
   );
 }
