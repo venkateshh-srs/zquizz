@@ -82,7 +82,13 @@ function UserResult() {
                       wordBreak: "break-word",
                     }}
                   >
-                    {qInd + 1}. {q.question}
+                    {qInd + 1}.{"  "}
+                    <MathJax inline dynamic>
+                      <div
+                        style={{ display: "inline" }}
+                        dangerouslySetInnerHTML={{ __html: q.question }}
+                      />
+                    </MathJax>
                   </FormLabel>
                   <RadioGroup value={selectedOptions[qInd]}>
                     {q.options.map((o, oInd) => {
@@ -106,7 +112,9 @@ function UserResult() {
                           control={<Radio disabled />}
                           label={
                             <Typography sx={{ color: textColor }}>
-                              {o}
+                              <MathJax inline dynamic>
+                                <div dangerouslySetInnerHTML={{ __html: o }} />
+                              </MathJax>
                             </Typography>
                           }
                           sx={{
