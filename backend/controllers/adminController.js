@@ -60,11 +60,11 @@ export const login = async (req, res) => {
       return res.status(404).json({ message: "Incorrect credentials" });
     } else {
       const token = jwt.sign({ adminId: admin._id }, process.env.JWT_SECRET, {
-        expiresIn: "1d",
+        expiresIn: "15d",
       });
       res.cookie("adminJwt", token, {
         httpOnly: true,
-        maxAge: 1000 * 60 * 60 * 24,
+        maxAge: 1000 * 60 * 60 * 24 * 15,
         secure: true,
         sameSite: "None",
       });
