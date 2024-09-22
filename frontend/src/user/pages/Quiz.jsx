@@ -139,7 +139,7 @@ function Quiz() {
                     control={<Radio />}
                     label={
                       <MathJax inline dynamic>
-                        <div dangerouslySetInnerHTML={{ __html: o }} />
+                        {o}
                       </MathJax>
                     }
                   />

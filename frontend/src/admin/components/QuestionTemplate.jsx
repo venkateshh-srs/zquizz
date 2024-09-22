@@ -154,10 +154,10 @@ function QuestionTemplate({ questions, setQuestions, title, setTitle }) {
       setErrorMessage("Topic length must be at least 3 chars");
       return;
     }
-    if (trimmedTopicName.length > 50) {
+    if (trimmedTopicName.length > 200) {
       setLoader(() => false);
       setOpenError(true);
-      setErrorMessage("Topic length cannot exceed 50 chars");
+      setErrorMessage("Topic length cannot exceed 200 chars");
 
       return;
     }

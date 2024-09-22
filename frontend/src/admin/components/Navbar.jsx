@@ -29,14 +29,32 @@ import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
 import CopyLinkDialog from "./CopyLinkDialog";
 import { useNavigate } from "react-router-dom";
+import { MathJax, MathJaxContext } from "better-react-mathjax";
+import CloseIcon from "@mui/icons-material/Close";
+
+import {
+  Radio,
+  RadioGroup,
+  FormControlLabel,
+  FormControl,
+  FormLabel,
+  Button,
+  Box,
+  Typography,
+  Paper,
+  Divider,
+  DialogContentText,
+  DialogTitle,
+} from "@mui/material";
 const drawerWidth = 240;
-const navItems = ["Home", "Publish"];
+const navItems = ["Home", "Preview", "Publish"];
 const url = process.env.BACKEND_URL;
 function Navbar(props) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [open, setOpen] = useState(false);
   const [loader, setLoader] = useState(false);
   const [linkDialogOpen, setLinkDialogOpen] = useState(false);
+  const [previewDialogOpen, setPreviewDialogOpen] = useState(false);
   const [quizLink, setQuizLink] = useState("");
   const navigate = useNavigate();
   const handleLinkDialogClose = () => {
@@ -93,7 +111,12 @@ function Navbar(props) {
     setLoader(false);
     setLinkDialogOpen(true);
   }
-
+  function handlePreviewDialog() {
+    setPreviewDialogOpen(false);
+  }
+  function handleShowPreview() {
+    setPreviewDialogOpen(true);
+  }
   const drawer = (
     <Box onClick={handleDrawerToggle} sx={{ textAlign: "center" }}>
       <Typography variant="h6" sx={{ my: 2 }}>
@@ -112,6 +135,8 @@ function Navbar(props) {
                   ? handleQuizReport
                   : null || item === "Home"
                   ? handleHomeClick
+                  : null || item === "Preview"
+                  ? handleShowPreview
                   : null
               }
             >
@@ -169,6 +194,8 @@ function Navbar(props) {
                       ? handleQuizReport
                       : null || item === "Home"
                       ? handleHomeClick
+                      : null || item === "Preview"
+                      ? handleShowPreview
                       : null
                   }
                 >
@@ -217,6 +244,114 @@ function Navbar(props) {
           </Button>
         </DialogActions>
       </Dialog>
+      {/* Dialog for preview of the quiz */}
+      <Dialog
+        open={previewDialogOpen}
+        onClose={handlePreviewDialog}
+        fullWidth
+        maxWidth="md"
+      >
+        <DialogTitle>Quiz Preview</DialogTitle>
+        <IconButton
+          aria-label="close"
+          onClick={handlePreviewDialog}
+          sx={(theme) => ({
+            position: "absolute",
+            right: 8,
+            top: 8,
+            color: theme.palette.grey[500],
+          })}
+        >
+          <CloseIcon />
+        </IconButton>
+        <DialogContent>
+          <Typography variant="h4" align="center" gutterBottom>
+            {props.title}
+          </Typography>
+
+          <Divider sx={{ marginBottom: "2rem" }} />
+
+          <MathJaxContext
+            config={{
+              loader: { load: ["input/tex", "input/mml", "output/chtml"] }, // Load both LaTeX and MathML
+              tex: {
+                inlineMath: [
+                  ["$", "$"],
+                  ["\\(", "\\)"],
+                ],
+                displayMath: [
+                  ["$$", "$$"],
+                  ["\\[", "\\]"],
+                ],
+              },
+            }}
+          >
+            <Paper
+              elevation={3}
+              sx={{ padding: "2rem", maxWidth: "800px", margin: "2rem auto" }}
+            >
+              <Divider sx={{ marginBottom: "2rem" }} />
+
+              <FormControl component="fieldset">
+                {props.questions.map((q, qInd) => (
+                  <Box key={qInd} mb={4}>
+                    <FormLabel
+                      sx={{
+                        marginBottom: "1rem",
+                        fontWeight: "bold",
+                        wordBreak: "break-word",
+                      }}
+                    >
+                      {qInd + 1}.{"  "}
+                      <MathJax inline dynamic>
+                        <div
+                          style={{ display: "inline" }}
+                          dangerouslySetInnerHTML={{ __html: q.question }}
+                        />
+                      </MathJax>
+                    </FormLabel>
+                    <RadioGroup>
+                      {q.options.map((o, oInd) => {
+                        return (
+                          <FormControlLabel
+                            key={oInd}
+                            value={oInd}
+                            control={<Radio disabled />}
+                            label={
+                              <Typography>
+                                <MathJax inline dynamic>
+                                  <div
+                                    dangerouslySetInnerHTML={{ __html: o }}
+                                  />
+                                </MathJax>
+                              </Typography>
+                            }
+                            sx={{
+                              wordBreak: "break-word",
+                              padding: "0.5rem",
+                            }}
+                          />
+                        );
+                      })}
+                    </RadioGroup>
+                  </Box>
+                ))}
+
+                <Divider sx={{ margin: "2rem 0" }} />
+              </FormControl>
+            </Paper>
+          </MathJaxContext>
+
+          <Button
+            onClick={handlePreviewDialog}
+            variant="contained"
+            sx={{ mt: 2 }}
+          >
+            Close Preview
+          </Button>
+        </DialogContent>
+      </Dialog>
+
       {loader && (
         <Backdrop
           sx={(theme) => ({ color: "#fff", zIndex: theme.zIndex.drawer + 1 })}

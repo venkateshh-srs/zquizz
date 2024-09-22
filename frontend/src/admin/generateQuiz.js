@@ -46,7 +46,7 @@ export default async function generateQuiz(topicName, numQuestions) {
           numQuestions,
           10
         )} multiple-choice quiz questions. 
-        If there are any mathematical formulas in the question or options give them in latex format which follows this mathjaxcontext config.
+        If there are any mathematical formulas in the question or options give them in latex format which follows this mathjax config 
           loader: { load: ["input/tex", "input/mml", "output/chtml"] },
           tex: {
             inlineMath: [
